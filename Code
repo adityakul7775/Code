@@ -1,0 +1,848 @@
+# ============================================================
+# PRACTICAL 1: EIGENVALUES AND EIGENVECTORS (2 x 2 MATRIX)
+# ============================================================
+
+def Cal_Eigenvalue(Matrix):
+    a = Matrix[0][0]
+    b = Matrix[0][1]
+    c = Matrix[1][0]
+    d = Matrix[1][1]
+
+    trace = a + d
+    det = a * d - b * c
+    disc = trace**2 - 4 * det
+
+    if disc < 0:
+        print("Eigen values are complex")
+        return None
+
+    sqrt_disc = disc**0.5
+    lamb1 = (trace + sqrt_disc) / 2
+    lamb2 = (trace - sqrt_disc) / 2
+
+    def Eigenvector(lam):
+        if b != 0:
+            v = (lam - a) / b
+            return [1, v]
+        elif c != 0:
+            v = [lam - d, c]
+            return v
+        else:
+            return [1, 0]
+
+    eigen_vector1 = Eigenvector(lamb1)
+    eigen_vector2 = Eigenvector(lamb2)
+
+    return [lamb1, lamb2], [eigen_vector1, eigen_vector2]
+
+
+A = []
+print("Enter the elements of the 2x2 matrix:")
+for i in range(2):
+    row = list(map(float, input(
+        f"Enter row {i + 1} (two elements separated by space): "
+    ).split()))
+    A.append(row)
+
+result = Cal_Eigenvalue(A)
+if result is not None:
+    eigen_value, eigen_vector = result
+    print("Eigenvalues:", eigen_value)
+    print("Eigenvectors:", eigen_vector)
+
+
+# ============================================================
+# PRACTICAL 2: MATRIX ADDITION
+# ============================================================
+
+def add_m(a, b):
+    result = []
+    for i in range(len(a)):
+        row = []
+        for j in range(len(a[0])):
+            row.append(a[i][j] + b[i][j])
+        result.append(row)
+    return result
+
+
+n = int(input("Enter the number of rows of matrix A: "))
+m = int(input("Enter the number of columns of matrix A: "))
+
+a = []
+print("Enter elements of first matrix in one line:")
+elements = list(map(int, input().split()))
+for i in range(n):
+    row = []
+    for j in range(m):
+        row.append(elements[i * m + j])
+    a.append(row)
+
+p = int(input("Enter the number of rows of matrix B: "))
+q = int(input("Enter the number of columns of matrix B: "))
+
+b = []
+print("Enter elements of second matrix in one line:")
+elements = list(map(int, input().split()))
+for i in range(p):
+    row = []
+    for j in range(q):
+        row.append(elements[i * q + j])
+    b.append(row)
+
+if n == p and m == q:
+    print("Addition of matrices:")
+    print(add_m(a, b))
+else:
+    print("Addition not possible")
+
+
+# ============================================================
+# PRACTICAL 3: SCALAR MULTIPLICATION OF A MATRIX
+# ============================================================
+
+def scalar_product(A, S):
+    result = []
+    for i in range(len(A)):
+        row = []
+        for j in range(len(A[0])):
+            row.append(A[i][j] * S)
+        result.append(row)
+    return result
+
+
+n = int(input("Enter the number of rows: "))
+m = int(input("Enter the number of columns: "))
+
+A = []
+print("Enter matrix elements in one line:")
+elements = list(map(int, input().split()))
+for i in range(n):
+    row = []
+    for j in range(m):
+        row.append(elements[i * m + j])
+    A.append(row)
+
+s = int(input("Enter the scalar: "))
+print("Scalar multiplication:")
+print(scalar_product(A, s))
+
+
+# ============================================================
+# PRACTICAL 4: MATRIX MULTIPLICATION
+# ============================================================
+
+def Multiplication(A, B):
+    result = []
+    for i in range(len(A)):
+        row = []
+        for j in range(len(B[0])):
+            total = 0
+            for k in range(len(A[0])):
+                total += A[i][k] * B[k][j]
+            row.append(total)
+        result.append(row)
+    return result
+
+
+n = int(input("Enter the number of rows of A: "))
+m = int(input("Enter the number of columns of A: "))
+
+A = []
+print("Enter elements of first matrix in one line:")
+elements = list(map(int, input().split()))
+for i in range(n):
+    row = []
+    for j in range(m):
+        row.append(elements[i * m + j])
+    A.append(row)
+
+p = int(input("Enter the number of rows of B: "))
+q = int(input("Enter the number of columns of B: "))
+
+B = []
+print("Enter elements of second matrix in one line:")
+elements = list(map(int, input().split()))
+for i in range(p):
+    row = []
+    for j in range(q):
+        row.append(elements[i * q + j])
+    B.append(row)
+
+if m == p:
+    print("Multiplication of matrices:")
+    print(Multiplication(A, B))
+else:
+    print("Multiplication not possible")
+
+
+# ============================================================
+# PRACTICAL 5: GAUSSIAN ELIMINATION
+# ============================================================
+
+def gaussian_elimination(A, b):
+    n = len(b)
+
+    # Forward elimination
+    for i in range(n):
+        pivot = A[i][i]
+
+        for j in range(i, n):
+            A[i][j] = A[i][j] / pivot
+        b[i] = b[i] / pivot
+
+        for k in range(i + 1, n):
+            factor = A[k][i]
+            for j in range(i, n):
+                A[k][j] = A[k][j] - factor * A[i][j]
+            b[k] = b[k] - factor * b[i]
+
+    # Back substitution
+    x = [0.0] * n
+    for i in range(n - 1, -1, -1):
+        x[i] = b[i]
+        for j in range(i + 1, n):
+            x[i] = x[i] - A[i][j] * x[j]
+
+    return x
+
+
+A = [
+    [2.0, 1.0, -1.0],
+    [-3.0, -1.0, 2.0],
+    [-2.0, 1.0, 2.0]
+]
+b = [8.0, -11.0, -3.0]
+
+solution = gaussian_elimination(A, b)
+print("Solution x:", solution)
+
+
+# ============================================================
+# PRACTICAL 6: BINOMIAL AND NORMAL DISTRIBUTION
+# ============================================================
+
+import numpy as np
+import matplotlib.pyplot as plt
+import scipy.stats as stats
+
+# Binomial distribution
+n = 10
+p = 0.5
+x_binomial = np.arange(n + 1)
+pmf_binomial = stats.binom.pmf(x_binomial, n, p)
+
+# Normal distribution
+mu = 0
+sigma = 1
+x_normal = np.linspace(-4, 4, 100)
+pdf_normal = stats.norm.pdf(x_normal, mu, sigma)
+
+# Plot both distributions
+plt.figure(figsize=(12, 5))
+
+plt.subplot(1, 2, 1)
+plt.stem(x_binomial, pmf_binomial, basefmt=" ")
+plt.title("Binomial Distribution (n=10, p=0.5)")
+plt.xlabel("Number of successes")
+plt.ylabel("Probability")
+
+plt.subplot(1, 2, 2)
+plt.plot(x_normal, pdf_normal, "r", lw=2)
+plt.title("Normal Distribution (mu=0, sigma=1)")
+plt.xlabel("Value")
+plt.ylabel("Probability Density")
+plt.grid(True)
+
+plt.tight_layout()
+plt.show()
+
+
+# ============================================================
+# PRACTICAL 7: CENTRAL LIMIT THEOREM (CLT)
+# ============================================================
+
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.stats import norm
+
+population = np.random.uniform(0, 1, 100000)
+sample_size = 30
+num_samples = 5000
+
+sample_means = []
+
+for i in range(num_samples):
+    sample = np.random.choice(population, sample_size)
+    sample_means.append(np.mean(sample))
+
+sample_means = np.array(sample_means)
+
+plt.figure(figsize=(10, 6))
+plt.hist(sample_means, bins=30, density=True, alpha=0.6,
+         color="black", label="Sample Means (CLT)")
+
+mean = np.mean(sample_means)
+std = np.std(sample_means)
+
+x = np.linspace(min(sample_means), max(sample_means), 1000)
+pdf = norm.pdf(x, mean, std)
+
+plt.plot(x, pdf, "r", linewidth=2,
+         label="Normal Distribution (CLT Prediction)")
+plt.title("Central Limit Theorem Demonstration")
+plt.xlabel("Sample Mean")
+plt.ylabel("Probability Density")
+plt.legend()
+plt.grid(True)
+plt.show()
+
+
+# ============================================================
+# PRACTICAL 8: T-DISTRIBUTION AND F-DISTRIBUTION
+# ============================================================
+
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.stats import t, f
+
+plt.figure(figsize=(12, 5))
+
+# T-distribution
+df = 8
+x1 = np.linspace(-4, 4, 500)
+y1 = t.pdf(x1, df)
+
+plt.subplot(1, 2, 1)
+plt.plot(x1, y1)
+plt.title("T-Distribution")
+plt.xlabel("t value")
+plt.ylabel("Probability Density")
+plt.grid()
+
+# F-distribution
+df1 = 7
+df2 = 12
+x2 = np.linspace(0, 5, 500)
+y2 = f.pdf(x2, df1, df2)
+
+plt.subplot(1, 2, 2)
+plt.plot(x2, y2)
+plt.title("F-Distribution")
+plt.xlabel("F value")
+plt.ylabel("Probability Density")
+plt.grid()
+
+plt.tight_layout()
+plt.show()
+
+
+# ============================================================
+# PRACTICAL 9: Z-TEST
+# ============================================================
+
+import numpy as np
+from scipy.stats import norm
+
+def z_test(sample, mu0, sigma=None, alpha=0.05,
+           alternative="two-sided"):
+    sample = np.array(sample)
+    n = len(sample)
+    x_bar = np.mean(sample)
+
+    if sigma is None:
+        sigma = np.std(sample, ddof=1)
+
+    z_stat = (x_bar - mu0) / (sigma / np.sqrt(n))
+
+    if alternative == "two-sided":
+        p_value = 2 * (1 - norm.cdf(abs(z_stat)))
+    elif alternative == "greater":
+        p_value = 1 - norm.cdf(z_stat)
+    elif alternative == "less":
+        p_value = norm.cdf(z_stat)
+    else:
+        raise ValueError("Alternative must be two-sided, less, or greater")
+
+    reject = p_value <= alpha
+
+    return {
+        "sample mean": x_bar,
+        "hypothesized mean": mu0,
+        "Z": z_stat,
+        "P value": p_value,
+        "Conclusion": "Reject H0" if reject else "Fail to reject H0"
+    }
+
+
+data = [52, 50, 53, 49, 48, 51, 54, 50, 52, 49]
+mu0 = 50
+alpha = 0.05
+
+result1 = z_test(data, mu0, sigma=None, alpha=alpha,
+                 alternative="two-sided")
+print("Two-sided test:", result1)
+
+result2 = z_test(data, mu0, sigma=None, alpha=alpha,
+                 alternative="greater")
+print("Right-tailed test:", result2)
+
+result3 = z_test(data, mu0, sigma=None, alpha=alpha,
+                 alternative="less")
+print("Left-tailed test:", result3)
+
+
+# ============================================================
+# PRACTICAL 10: F-TEST FOR EQUALITY OF VARIANCES
+# ============================================================
+
+import numpy as np
+from scipy.stats import f as f_dist
+
+def f_test_variances(sample1, sample2, alpha=0.05):
+    s1 = np.asarray(sample1, dtype=float)
+    s2 = np.asarray(sample2, dtype=float)
+
+    var1 = s1.var(ddof=1)
+    var2 = s2.var(ddof=1)
+
+    n1 = len(s1)
+    n2 = len(s2)
+
+    # Put the larger variance in the numerator
+    if var1 >= var2:
+        F = var1 / var2
+        df1, df2 = n1 - 1, n2 - 1
+    else:
+        F = var2 / var1
+        df1, df2 = n2 - 1, n1 - 1
+
+    p_value = 2 * min(
+        f_dist.cdf(F, df1, df2),
+        1 - f_dist.cdf(F, df1, df2)
+    )
+
+    critical_value = f_dist.ppf(1 - alpha / 2, df1, df2)
+    reject = F > critical_value
+
+    return {
+        "Variance 1": round(var1, 4),
+        "Variance 2": round(var2, 4),
+        "F-statistic": round(F, 4),
+        "df1, df2": (df1, df2),
+        "Critical F": round(critical_value, 4),
+        "p-value": round(p_value, 6),
+        "Conclusion": "Reject H0 (variances differ)" if reject
+                      else "Fail to reject H0 (insufficient evidence of difference)"
+    }
+
+
+machine_A = [10.0, 10.1, 9.9, 10.2, 9.8]
+machine_B = [10.0, 9.9, 10.1, 9.8, 10.2]
+
+result = f_test_variances(machine_A, machine_B, alpha=0.05)
+for k, v in result.items():
+    print(f"{k:22s}: {v}")
+
+
+# ============================================================
+# PRACTICAL 11: N-STEP TRANSITION PROBABILITY (MARKOV CHAIN)
+# ============================================================
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+def validate_transition_matrix(P):
+    P = np.array(P, dtype=float)
+
+    if P.ndim != 2 or P.shape[0] != P.shape[1]:
+        raise ValueError("Transition matrix must be square.")
+
+    if np.any(P < 0):
+        raise ValueError("Transition matrix cannot have negative entries.")
+
+    if np.any(P > 1):
+        raise ValueError("Transition matrix cannot have entries greater than 1.")
+
+    if not np.allclose(P.sum(axis=1), 1):
+        raise ValueError("Each row of the transition matrix must sum to 1.")
+
+    return P
+
+
+def n_step_transition_probability(P, n):
+    P = validate_transition_matrix(P)
+    return np.linalg.matrix_power(P, n)
+
+
+P = np.array([
+    [0.7, 0.2, 0.1],
+    [0.1, 0.6, 0.3],
+    [0.4, 0.2, 0.4]
+])
+
+state_names = ["Sunny", "Cloudy", "Rainy"]
+
+for n in [1, 2, 5, 10, 20]:
+    Pn = n_step_transition_probability(P, n)
+    print(f"\n{n}-step transition matrix P^{n}:")
+    print(np.round(Pn, 4))
+
+print("\nExample:")
+print("P^5[0][2] =", n_step_transition_probability(P, 5)[0][2])
+print("This is the probability of Rainy after 5 steps, given that today is Sunny.")
+
+max_n = 20
+evolution = np.array([
+    n_step_transition_probability(P, n)[0]
+    for n in range(1, max_n + 1)
+])
+
+plt.figure(figsize=(8, 5))
+for i, name in enumerate(state_names):
+    plt.plot(
+        range(1, max_n + 1),
+        evolution[:, i],
+        marker="o",
+        label=f"P(Sunny -> {name})"
+    )
+
+plt.xlabel("Number of Steps")
+plt.ylabel("Probability")
+plt.title("N-Step Transition Probability")
+plt.legend()
+plt.grid()
+plt.show()
+
+
+# ============================================================
+# PRACTICAL 12: SECOND-ORDER MARKOV CHAIN
+# ============================================================
+
+import random
+
+states = ["Sunny", "Cloudy", "Rainy"]
+sequences = []
+
+for i in range(500):
+    sequence = []
+    for j in range(10):
+        sequence.append(random.choice(states))
+    sequences.append(sequence)
+
+print("First 3 sequences:")
+for sequence in sequences[:3]:
+    print(sequence)
+
+counts = {}
+
+for sequence in sequences:
+    for i in range(2, len(sequence)):
+        state1 = sequence[i - 2]
+        state2 = sequence[i - 1]
+        next_state = sequence[i]
+
+        key = (state1, state2, next_state)
+
+        if key not in counts:
+            counts[key] = 0
+        counts[key] += 1
+
+for state1 in states:
+    for state2 in states:
+        total = 0
+
+        for next_state in states:
+            key = (state1, state2, next_state)
+            total += counts.get(key, 0)
+
+        print("\n", state1, "->", state2)
+
+        for next_state in states:
+            key = (state1, state2, next_state)
+            count = counts.get(key, 0)
+
+            if total > 0:
+                probability = count / total
+            else:
+                probability = 0
+
+            print("->", next_state, ":", round(probability, 3))
+
+
+# ============================================================
+# PRACTICAL 13: PEARSON CORRELATION COEFFICIENT
+# ============================================================
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+def pearson_correlation(x, y):
+    x = np.asarray(x, dtype=float)
+    y = np.asarray(y, dtype=float)
+
+    x_mean = np.mean(x)
+    y_mean = np.mean(y)
+
+    numerator = np.sum((x - x_mean) * (y - y_mean))
+    denominator = (
+        np.sqrt(np.sum((x - x_mean)**2)) *
+        np.sqrt(np.sum((y - y_mean)**2))
+    )
+
+    return numerator / denominator
+
+
+hours_studied = [1, 2, 3, 4, 5, 6, 6, 6, 9, 10]
+marks_obtained = [92, 85, 89, 73, 78, 61, 65, 48, 42, 35]
+
+r_manual = pearson_correlation(hours_studied, marks_obtained)
+r_numpy = np.corrcoef(hours_studied, marks_obtained)[0, 1]
+
+print(f"Pearson correlation coefficient (manual): {r_manual:.4f}")
+print(f"Pearson correlation coefficient (numpy): {r_numpy:.4f}")
+
+if r_manual >= 0.7:
+    strength = "strong positive"
+elif r_manual >= 0.3:
+    strength = "moderate positive"
+elif r_manual > -0.3:
+    strength = "weak or no linear"
+elif r_manual > -0.7:
+    strength = "moderate negative"
+else:
+    strength = "strong negative"
+
+print(f"Interpretation: {strength} linear relationship between hours studied and marks.")
+
+plt.figure(figsize=(7, 5))
+plt.scatter(hours_studied, marks_obtained,
+            color="teal", s=60, label="Data points")
+
+m, c = np.polyfit(hours_studied, marks_obtained, 1)
+xs = np.linspace(min(hours_studied), max(hours_studied), 100)
+
+plt.plot(xs, m * xs + c, "r--",
+         label=f"Best-fit line (slope = {m:.2f})")
+
+plt.title(f"Hours Studied vs Marks Obtained (r = {r_manual:.3f})")
+plt.xlabel("Hours Studied")
+plt.ylabel("Marks Obtained")
+plt.legend()
+plt.grid(alpha=0.3)
+plt.show()
+
+
+# ============================================================
+# PRACTICAL 14: LAGRANGE INTERPOLATION
+# ============================================================
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+def lagrange_interpolation(x_points, y_points, x_val):
+    n = len(x_points)
+    result = 0.0
+
+    for i in range(n):
+        term = y_points[i]
+
+        for j in range(n):
+            if i != j:
+                term *= (
+                    (x_val - x_points[j]) /
+                    (x_points[i] - x_points[j])
+                )
+
+        result += term
+
+    return result
+
+
+x = np.array([1, 2, 3, 4, 5], dtype=float)
+y = np.array([2, 4, 1, 3, 7], dtype=float)
+
+x_new = 2.5
+y_new = lagrange_interpolation(x, y, x_new)
+
+print(f"Interpolated value at x = {x_new} is y = {y_new:.4f}")
+
+x_range = np.linspace(min(x), max(x), 200)
+y_range = [lagrange_interpolation(x, y, xi) for xi in x_range]
+
+plt.figure(figsize=(8, 5))
+plt.scatter(x, y, color="red", zorder=5, label="Known data points")
+plt.plot(x_range, y_range, color="blue",
+         label="Lagrange interpolation curve")
+plt.scatter([x_new], [y_new], color="green", zorder=5,
+            marker="X", s=100,
+            label=f"Interpolated point (x = {x_new})")
+
+plt.title("Lagrange Interpolation")
+plt.xlabel("x")
+plt.ylabel("y")
+plt.legend()
+plt.grid(alpha=0.3)
+plt.show()
+
+
+# ============================================================
+# PRACTICAL 15: NEWTON'S DIVIDED-DIFFERENCE INTERPOLATION
+# ============================================================
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+def divided_diff(x, y):
+    n = len(x)
+    table = np.zeros((n, n))
+    table[:, 0] = y
+
+    for j in range(1, n):
+        for i in range(n - j):
+            table[i][j] = (
+                table[i + 1][j - 1] - table[i][j - 1]
+            ) / (x[i + j] - x[i])
+
+    return table
+
+
+def newton_interpolation(x, table, value):
+    n = len(x)
+    result = table[0][0]
+    product = 1.0
+
+    for i in range(1, n):
+        product *= (value - x[i - 1])
+        result += table[0][i] * product
+
+    return result
+
+
+x = np.array([1, 2, 3, 4], dtype=float)
+y = np.array([1, 4, 9, 16], dtype=float)
+
+n = len(x)
+table = divided_diff(x, y)
+
+print("Divided-difference table:")
+for i in range(n):
+    row = [
+        f"{table[i][j]:.4f}" if j < n - i else "0.0000"
+        for j in range(n)
+    ]
+    print(row)
+
+value = 2.5
+result = newton_interpolation(x, table, value)
+
+print(f"\nInterpolated value at x = {value} is {result:.4f}")
+print(f"Exact x^2 value is {value**2:.2f}")
+
+x_plot = np.linspace(min(x), max(x), 100)
+y_plot = [
+    newton_interpolation(x, table, val)
+    for val in x_plot
+]
+
+plt.plot(x, y, "ro", label="Known data points")
+plt.plot(x_plot, y_plot, color="purple",
+         label="Newton interpolation curve")
+plt.scatter(value, result, color="green", marker="x",
+            s=100, linewidths=2,
+            label=f"Interpolated point (x={value})")
+
+plt.title("Newton's Divided-Difference Interpolation")
+plt.xlabel("x")
+plt.ylabel("y")
+plt.legend()
+plt.grid(alpha=0.3)
+plt.show()
+
+
+# ============================================================
+# PRACTICAL 16: MULTIPLE LINEAR REGRESSION - HOUSE PRICE
+# ============================================================
+
+import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, r2_score
+from sklearn.model_selection import train_test_split
+
+np.random.seed(42)
+n = 120
+
+size = np.random.randint(500, 4000, n)
+bedrooms = np.random.randint(1, 6, n)
+bathrooms = np.random.randint(1, 4, n)
+distance = np.random.randint(1, 30, n)
+
+price = (
+    3000 * bedrooms
+    + 5000 * bathrooms
+    + 200 * size
+    - 1500 * distance
+    + np.random.randint(-10000, 10000, n)
+)
+
+house_data = pd.DataFrame({
+    "Size_sqft": size,
+    "Bedrooms": bedrooms,
+    "Bathrooms": bathrooms,
+    "Distance_km": distance,
+    "Price": price
+})
+
+house_data.to_csv("house_prices.csv", index=False)
+print("Dataset saved as house_prices.csv")
+print(house_data.head())
+
+X = house_data[["Size_sqft", "Bedrooms", "Bathrooms", "Distance_km"]]
+y = house_data["Price"]
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+model = LinearRegression()
+model.fit(X_train, y_train)
+
+y_pred = model.predict(X_test)
+
+mse = mean_squared_error(y_test, y_pred)
+r2 = r2_score(y_test, y_pred)
+
+print("Model Coefficients (Weights):", model.coef_)
+print("Intercept:", model.intercept_)
+print("Mean Squared Error (MSE):", mse)
+print("R2 Score:", r2)
+
+print("\nEquation:")
+print(
+    f"Price = {model.intercept_:.2f} "
+    f"+ ({model.coef_[0]:.2f} * Size_sqft) "
+    f"+ ({model.coef_[1]:.2f} * Bedrooms) "
+    f"+ ({model.coef_[2]:.2f} * Bathrooms) "
+    f"+ ({model.coef_[3]:.2f} * Distance_km)"
+)
+
+# Actual vs predicted graph
+plt.figure(figsize=(8, 6))
+plt.scatter(y_test, y_pred, color="blue", alpha=0.6)
+plt.plot([y.min(), y.max()], [y.min(), y.max()], "r--", lw=2)
+plt.xlabel("Actual House Price")
+plt.ylabel("Predicted House Price")
+plt.title("Actual vs Predicted House Prices (Multiple Linear Regression)")
+plt.show()
+
+# Residual graph
+residuals = y_test - y_pred
+
+plt.figure(figsize=(8, 6))
+plt.scatter(y_pred, residuals, color="green", alpha=0.6)
+plt.axhline(0, color="red", linestyle="--")
+plt.xlabel("Predicted Price")
+plt.ylabel("Residuals (Actual - Predicted)")
+plt.title("Residuals vs Predicted Prices")
+plt.show()
